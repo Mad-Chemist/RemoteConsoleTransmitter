@@ -1,10 +1,13 @@
-// Import this file into client SENDING log messages then make use of library 
-// EX: const remoteConsoleTransmitter = new RemoteConsoleTransmitter("http://localhost:3000");
+"use strict";
 
 import io from "../../../vendor/client.socket.io.js";
 import stringify from 'json-stringify-safe';
 import _debounce from 'lodash/function/debounce';
 import _forEach from 'lodash/collection/forEach';
+
+
+// Import this file into client SENDING log messages then make use of library 
+// EX: const remoteConsoleTransmitter = new RemoteConsoleTransmitter("http://localhost:3000");
 
 const WAIT = 3000;
 const STYPE = "logPayload";
