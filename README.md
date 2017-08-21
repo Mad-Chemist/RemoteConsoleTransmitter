@@ -6,5 +6,5 @@ Import the ./js/RemoteConsoleTransmitter:
 ```import RemoteConsoleTransmitter from 'stb/diagnostics/RemoteConsoleTransmitter';```
 And initialize it via ```const remoteConsoleTransmitter = new RemoteConsoleTransmitter("http://localhost:3000");```
 
-##Server application
+## Server application
 To run the server, from console execute command ```npm run start``` and try accessing the display page via the URL: http://localhost:3000
