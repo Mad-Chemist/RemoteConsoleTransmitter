@@ -1,3 +1,5 @@
+"use strict";
+
 const PORT = 3000;
 const STYPE = "logPayload";
 const app = require('express')();
