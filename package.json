@@ -1,0 +1,16 @@
+{
+  "name": "RemoteConsoleTransmitter",
+  "version": "1.0.0",
+  "description": "Provides a socket connection to allow client connections to transmit console events.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Vico Bertogli III",
+  "license": "ISC",
+  "devDependencies": {
+    "express": "^4.15.2",
+    "http": "0.0.0",
+    "socket.io": "^2.0.3"
+  }
+}
