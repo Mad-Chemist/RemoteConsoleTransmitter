@@ -1,5 +1,3 @@
-"use strict";
-
 import io from "../../../vendor/client.socket.io.js";
 import stringify from 'json-stringify-safe';
 import _debounce from 'lodash/function/debounce';
