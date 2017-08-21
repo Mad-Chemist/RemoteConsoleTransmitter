@@ -3,7 +3,7 @@ Provides a socket connection to allow client connections to transmit console eve
 
 ## Client application
 Import the ./js/RemoteConsoleTransmitter:
-```import RemoteConsoleTransmitter from 'stb/diagnostics/RemoteConsoleTransmitter';```
+```import RemoteConsoleTransmitter from 'js/RemoteConsoleTransmitter';```
 And initialize it via ```const remoteConsoleTransmitter = new RemoteConsoleTransmitter("http://localhost:3000");```
 
 ## Server application
