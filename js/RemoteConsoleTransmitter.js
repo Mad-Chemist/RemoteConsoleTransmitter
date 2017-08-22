@@ -10,6 +10,8 @@ import _forEach from 'lodash/collection/forEach';
 const WAIT = 3000;
 const STYPE = "logPayload";
 const LINE_BREAK = "\r\n";
+const EOL = ";;; ";
+
 // const origConsoleLog = window.console.log.bind(window.console);
 const LOG_TYPES = {
 	LOG: "LOG",
@@ -36,7 +38,7 @@ function RemoteConsoleTransmitter(host) {
 	return this;
 };
 
-RemoteConsoleTransmitter.prototype.log = function log(message, style) {
+RemoteConsoleTransmitter.prototype.logMessage = function logMessage(message, style) {
     let output = message;
     if (typeof message !== "string") {
         output = stringify(message);
@@ -46,19 +48,19 @@ RemoteConsoleTransmitter.prototype.log = function log(message, style) {
         output = "[" + style + "] " + output;
     }
 
-    this.handleConsoleMessage("[" + getLogTime() + "] " + output);
+    this.storeLogMessage("[" + getLogTime() + "] " + output);
 };
 
-RemoteConsoleTransmitter.prototype.handleMultiLogArguments = function handleMultiLogArguments(args) {
+RemoteConsoleTransmitter.prototype.interpretLogMessageArguments = function interpretLogMessageArguments(args) {
     let output = "";
     let simplified = Array.prototype.slice.apply(args);
 
     _forEach(simplified, function(arg) {
-        if (typeof(arg) == "object") {
-            output += "{{" + stringify(arg) + "}};;; ";
+        if (typeof(arg) === "object") {
+            output += "{{" + stringify(arg) + "}}" + EOL;
         }
         else {
-            output += arg + ";;; ";
+            output += arg + EOL;
         }
     });
 
@@ -69,24 +71,24 @@ RemoteConsoleTransmitter.prototype.interceptLogMessages = function interceptLogM
     let self = this;
 
     window.console.log = function() {
-        self.log(self.handleMultiLogArguments(arguments), LOG_TYPES.LOG);
+        self.logMessage(self.interpretLogMessageArguments(arguments), LOG_TYPES.LOG);
     };
 
     window.console.warn = function() {
-        self.log(self.handleMultiLogArguments(arguments), LOG_TYPES.WARN);
+        self.logMessage(self.interpretLogMessageArguments(arguments), LOG_TYPES.WARN);
     };
 
     window.console.error = function() {
-        self.log(self.handleMultiLogArguments(arguments), LOG_TYPES.ERR);
+        self.logMessage(self.interpretLogMessageArguments(arguments), LOG_TYPES.ERR);
     };
 
     window.onunhandledrejection = window.onanyerror = window.onerror = function() {
-        self.log(self.handleMultiLogArguments([arguments[0].reason.toString(), arguments]), (arguments[0].type && arguments[0].type.toUpperCase()) || LOG_TYPES.THROWN);
+        self.logMessage(self.interpretLogMessageArguments([arguments[0].reason.toString(), arguments]), (arguments[0].type && arguments[0].type.toUpperCase()) || LOG_TYPES.THROWN);
         return true;
     };
 };
 
-RemoteConsoleTransmitter.prototype.handleConsoleMessage = function handleConsoleMessage(message) {
+RemoteConsoleTransmitter.prototype.storeLogMessage = function storeLogMessage(message) {
 	if (typeof message === "string") {
 		this.unsentMessages.push(message.trim());
 	}
@@ -95,9 +97,8 @@ RemoteConsoleTransmitter.prototype.handleConsoleMessage = function handleConsole
 };
 
 RemoteConsoleTransmitter.prototype.transmitUnsentMessages = function transmitUnsentMessages() {
-	let msgs = stringify(this.unsentMessages);
-	this.unsentMessages = [];
-	this.socket.emit(STYPE, msgs);
+	this.socket.emit(STYPE, stringify(this.unsentMessages));
+    this.unsentMessages = [];
 };
 
 export default RemoteConsoleTransmitter;
